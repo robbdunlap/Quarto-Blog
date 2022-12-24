@@ -1,0 +1,26 @@
+{
+  "index.qmd": {
+    "index.html": "88ffb1ef"
+  },
+  "posts/post-with-code/index.qmd": {
+    "index.html": "025fd065"
+  },
+  "posts/welcome/index.qmd": {
+    "index.html": "401fbe0d"
+  },
+  "about.qmd": {
+    "about.html": "9d81376e"
+  },
+  "posts/word2vec-neg-vals/index.qmd": {
+    "index.html": "7b3c2f8a"
+  },
+  "posts/python-cheat-sheet/index.qmd": {
+    "index.html": "a8533294"
+  },
+  "posts/useful-sites-links/index.qmd": {
+    "index.html": "1e4cff24"
+  },
+  "posts/quarto-operations/index.qmd": {
+    "index.html": "dac80846"
+  }
+}

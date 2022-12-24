@@ -1,0 +1,16 @@
+---
+title: "Links to Useful Programming References"
+author: "Robb Dunlap"
+date: "2022-12-24"
+categories: [references]
+image: "bilal-karim-q6_cGZbXL54-unsplash.jpg"
+---
+
+#### [Markdown Cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#links "adam-p's github repo on markdown")
+
+#### [Pandoc Cheatsheet](https://garrettgman.github.io/rmarkdown/authoring_pandoc_markdown.html "Pandoc markdown syntax cheatsheet")
+
+
+<br><br>
+
+*Photo by <a href="https://unsplash.com/@beekay?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Bilal Karim</a> on <a href="https://unsplash.com/s/photos/references?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>*

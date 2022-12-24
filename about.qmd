@@ -1,0 +1,16 @@
+---
+title: "About"
+image: profile.jpg
+about: 
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/robb-dunlap-data-scientist/
+    - icon: github
+      text: Github
+      href: https://github.com/robbdunlap
+
+---
+
+Just a collection of my thoughts or notes on Python programming and natural language processing

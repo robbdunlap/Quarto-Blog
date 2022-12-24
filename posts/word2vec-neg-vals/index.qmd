@@ -1,0 +1,128 @@
+---
+title: "Understanding negative cosine similarity in Word2Vec generated vectors"
+author: "Robb Dunlap"
+date: "2022-12-24"
+categories: [nlp,word2vec]
+image: "conny-schneider-xuTJZ7uD7PI-unsplash.jpg"
+---
+
+The key to understanding why cosine similarity of a W2V vector can be negative is to appreciate that the W2V vectors are not the same as vectors based on a simple token counting alorithm. If the vectorization system was based upon a simple count of the number of times a word showed up within a range of n-words in the training corpus then all cosine similarities for the vocabulary would range from 0 to 1. 
+
+### Concrete example of a simple counting algorithm:
+
+```{python}
+import re
+import string
+import pandas as pd
+import numpy as np
+```
+
+Starting corpus:<br>
+
+> “The restaurant was fantastic and the waiters were experts. I recommend eating there if you want
+to experience the best of fine dining and excellent waiters.”
+
+```{python}
+corpus = """
+The restaurant was fantastic and the waiters were experts. I recommend eating there if you want
+to experience the best of fine dining and excellent waiters. 
+"""
+corpus = re.sub(r'\n', ' ', corpus)
+
+# remove punctuation and starting/ending spaces and make all characters lowercase
+corpus_no_punct = re.sub('[.,]', '', corpus)
+corpus_no_punct = re.sub(r'^ ', '', corpus_no_punct)
+corpus_no_punct = re.sub(r' $', '', corpus_no_punct)
+corpus_no_punct_lc = corpus_no_punct.lower()
+```
+
+The vocabulary is:
+
+```{python}
+# generate the list of tokens
+corpus_tokens = corpus_no_punct_lc.split()
+corpus_tokens_set = set(corpus_tokens)
+corpus_tokens_set
+```
+
+
+An example of a token window (-2 to +2) for the word eating is: <br>
+
+> “highly recommend **eating** there if” 
+
+*\*in this example the word window counting is done on the complete list of tokens from the input text, not on a sentence-by-sentence basis*
+
+The vectors for "the", "were", and "experts" are (the vectors are the columns):
+
+```{python}
+input_text_zeroes_dict = {k:0 for k in set(corpus_tokens)}
+
+input_text_counted_dict = input_text_zeroes_dict.copy()
+
+for word in corpus_tokens:
+    input_text_counted_dict[word] += 1
+
+to_pandas_dict = {k:[v] for k,v in input_text_counted_dict.items()}
+results_df = pd.DataFrame.from_dict(to_pandas_dict, orient='index', columns=['vocab_count'])
+
+def position_checker(i,j, len_lst):
+    if i+j < 0:
+        return False
+    elif i+j >= len_lst:
+        return False
+    else:
+        return True
+
+# add each unique word as a column
+for word in set(corpus_tokens):
+    results_df[word] = 0
+
+len_corpus_tokens = len(corpus_tokens)
+
+# loop through every word in the list
+for i,word in enumerate(corpus_tokens):
+    # loop through the 4 surrounding words start at -2 through +2
+
+    # dict to hold each word vector
+    word_vects_dict = input_text_zeroes_dict.copy()
+
+    for j in [-2,-1,1,2]:
+        # use a try block, that way the first two words at the beginning of the list and at the end won't fail
+        check = position_checker(i,j, len_corpus_tokens)
+        if check:
+            results_df.loc[corpus_tokens[i + j], word] += 1
+
+choices = ['the','were','experts']
+results_df[choices].sort_index()
+```
+
+
+The scalars within each vector range from 0 to m (the count of the word that had the highest count in the corpus). When comparing two vectors using this system then the cosine similarity would always scale from 0 (orthogonal) to 1 (aligned). For example, cosine similarity for the above three words is:
+
+```{python}
+def cosine_similarity(A, B):
+    dot = np.dot(A,B)    
+    norma = np.linalg.norm(A)
+    normb = np.linalg.norm(B)
+    cos = dot / (norma * normb)
+    return cos
+
+cossim0_1 = cosine_similarity(results_df[choices[0]], results_df[choices[1]])
+cossim0_2 = cosine_similarity(results_df[choices[0]], results_df[choices[2]])
+cossim1_2 = cosine_similarity(results_df[choices[1]], results_df[choices[2]])
+
+print(f'"{choices[0]}" and "{choices[1]}":      {cossim0_1:.4f}')
+print(f'"{choices[0]}" and "{choices[2]}":   {cossim0_2:.4f}')
+print(f'"{choices[1]}" and "{choices[2]}":  {cossim1_2:.4f}')
+```
+
+
+### Why W2V Can Have Negative Cosine Similarities
+
+W2V works differently than the simple counting example above. W2V is a 2-layer neural net (a hidden layer and an output layer). The model was trained to predict a missing word in a sentence (CBOW) and also the surrounding context words of a word in a sentence (Skipgram). While it was trained to do this function, the crafty part of the W2V is that we don’t care about the output after it has been trained. Instead, we want the embedding which is the value of the hidden layer for a word of interest (if you are unfamiliar with the inner workings of W2V then I recommend reading Chris McCormick’s blog on it - http://mccormickml.com/2016/04/19/word2vec-tutorial-the-skip-gram-model/). The net result is that the scalar values within the embedding vector can be -1 to +1. As such, it’s possible to have one vector diametrically opposed to another and thus a cosine similarity of -1, something that is not possible with the simple token window frequency approach. 
+
+My interpretation of a negative cosine similarity value for two words is that they are unrelated or possibly of opposite value but not necessarily antonyms of each other. I can think of examples where true antonyms might have high cosine similarity scores because, as John Rupert Firth might have put it, they keep the same company (https://en.wikipedia.org/wiki/John_Rupert_Firth). 
+
+
+
+*Photo by <a href="https://unsplash.com/@choys_?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Conny Schneider</a> on <a href="https://unsplash.com/photos/xuTJZ7uD7PI?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>*

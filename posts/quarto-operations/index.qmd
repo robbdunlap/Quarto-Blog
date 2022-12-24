@@ -1,0 +1,32 @@
+---
+title: "Checklist for Publishing on Quarto"
+author: "Robb Dunlap"
+date: "2022-12-24"
+categories: [quarto,sop, references]
+image: "andres-dallimonti-ypsFFH-XRv0-unsplash.jpg"
+---
+
+### To create a new post
+1. Create a new folder in the ./posts/ folder - give it a name relevant to the post
+2. Put a copy of a relevant image into the folder
+3. Create a new file in the just created folder - name it "index.qmd"
+4. Add the TOML header to the file
+    a. Change the image file name to match the image in the folder
+5. Add the photo attribution to the bottom of the file with two \<br> elements separating them from the text above and italisize the attribution
+6. Write the post in the body of the file
+7. View the post in draft using Render
+8. Publish the post to website using the command line
+    a. navigate to the overall blog folder
+    b. use the command "quarto publish quarto-pub"
+    c. select the existing project
+
+<br><br>
+
+### Useful References
+- [Quarto: Creating a Blog](https://quarto.org/docs/websites/website-blog.html)
+- [Quarto: Quarto Publishing](https://quarto.org/docs/publishing/quarto-pub.html)
+
+<br><br>
+
+*Photo by <a href="https://unsplash.com/fr/@dallimonti?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Andrés Dallimonti</a> on <a href="https://unsplash.com/photos/ypsFFH-XRv0?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText">Unsplash</a>
+  *
